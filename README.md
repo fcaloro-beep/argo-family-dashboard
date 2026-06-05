@@ -12,7 +12,7 @@ ogni figlio.
 
 ## Stato del progetto
 
-Versione beta nativa: `0.4.1`.
+Versione beta nativa: `0.4.2`.
 
 La repository e installabile da HACS come custom integration Home Assistant.
 Non richiede Docker e non richiede MQTT.
