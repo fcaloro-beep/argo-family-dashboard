@@ -10,7 +10,7 @@ bacheca e assenze.
 
 ## Stato del progetto
 
-Versione beta nativa: `0.4.0`.
+Versione beta nativa: `0.4.1`.
 
 Questa repository e pensata per essere installabile da HACS come una normale
 custom integration Home Assistant.
@@ -33,16 +33,15 @@ Non e richiesto Docker e non e richiesto MQTT.
 
 ## Icona Home Assistant
 
-Home Assistant mostra l'icona ufficiale di una custom integration tramite il
-repository `home-assistant/brands`. Gli asset sono gia pronti in:
+Da Home Assistant 2026.3 le custom integration possono includere direttamente
+le proprie immagini brand. Gli asset principali sono in:
 
 - `assets/icon.png`
 - `assets/logo.png`
-- `brands/custom_integrations/argo_family_dashboard/icon.png`
-- `brands/custom_integrations/argo_family_dashboard/logo.png`
+- `custom_components/argo_family_dashboard/brand/icon.png`
+- `custom_components/argo_family_dashboard/brand/logo.png`
 
-Quando la repository sara pubblicata su GitHub, questi file potranno essere
-usati per aprire una richiesta su `home-assistant/brands`.
+Non e necessario aprire una richiesta su `home-assistant/brands`.
 
 ## Installazione HACS
 
