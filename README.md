@@ -1,7 +1,7 @@
 # Argo Family Dashboard for Home Assistant
 
 <p align="center">
-  <img src="assets/logo.svg" alt="Argo Family Dashboard" width="360">
+  <img src="assets/logo.png" alt="Argo Family Dashboard" width="360">
 </p>
 
 Integrazione non ufficiale Home Assistant per Argo/didUP pensata per famiglie:
@@ -12,7 +12,7 @@ ogni figlio.
 
 ## Stato del progetto
 
-Versione beta nativa: `0.4.2`.
+Versione beta nativa: `0.4.4`.
 
 La repository e installabile da HACS come custom integration Home Assistant.
 Non richiede Docker e non richiede MQTT.
