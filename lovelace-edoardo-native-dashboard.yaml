@@ -1,0 +1,315 @@
+views:
+  - title: Argo Edoardo
+    path: argo-edoardo
+    icon: mdi:school
+    type: sections
+    max_columns: 4
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:school
+            heading: Argo Edoardo
+            heading_style: title
+            badges:
+              - type: entity
+                entity: sensor.argo_edoardo_stato
+                name: Stato
+          - type: tile
+            entity: sensor.argo_edoardo_media_generale
+            name: Media generale
+            icon: mdi:chart-donut
+            color: green
+          - type: tile
+            entity: sensor.argo_edoardo_ultimo_voto
+            name: Ultimo voto
+            icon: mdi:clipboard-text
+            color: blue
+          - type: tile
+            entity: sensor.argo_edoardo_compiti_da_fare
+            name: Compiti da fare
+            icon: mdi:calendar-check
+            color: amber
+          - type: tile
+            entity: sensor.argo_edoardo_prossimi_impegni
+            name: Prossimi impegni
+            icon: mdi:calendar-clock
+            color: cyan
+          - type: tile
+            entity: sensor.argo_edoardo_assenze
+            name: Assenze
+            icon: mdi:account-off
+            color: red
+
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:book-open-variant
+            heading: Materie
+            heading_style: title
+            badges:
+              - type: entity
+                entity: sensor.argo_edoardo_materie
+                name: Totale
+          - type: markdown
+            content: |
+              {% set materie = state_attr('sensor.argo_edoardo_materie', 'subjects') or state_attr('sensor.argo_edoardo_media_generale', 'subjects') or [] %}
+              {% if materie | count == 0 %}
+              Nessuna materia disponibile.
+              {% else %}
+              | Materia | Media | Voti |
+              |---|---:|---:|
+              {% for item in materie %}
+              | {{ item.get('materia') or 'Materia' }} | **{{ item.get('media') if item.get('media') is not none else '' }}** | {{ item.get('voti') or 0 }} |
+              {% endfor %}
+              {% endif %}
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: tile
+                entity: sensor.argo_edoardo_materia_italiano
+                name: Italiano
+                icon: mdi:book-education
+                color: blue
+              - type: tile
+                entity: sensor.argo_edoardo_materia_matematica
+                name: Matematica
+                icon: mdi:calculator
+                color: green
+              - type: tile
+                entity: sensor.argo_edoardo_materia_inglese
+                name: Inglese
+                icon: mdi:translate
+                color: cyan
+              - type: tile
+                entity: sensor.argo_edoardo_materia_storia
+                name: Storia
+                icon: mdi:book-clock
+                color: brown
+              - type: tile
+                entity: sensor.argo_edoardo_materia_geografia
+                name: Geografia
+                icon: mdi:map
+                color: teal
+              - type: tile
+                entity: sensor.argo_edoardo_materia_scienze_e_tecnologia
+                name: Scienze e tecnologia
+                icon: mdi:flask
+                color: purple
+              - type: tile
+                entity: sensor.argo_edoardo_materia_musica
+                name: Musica
+                icon: mdi:music
+                color: pink
+              - type: tile
+                entity: sensor.argo_edoardo_materia_religione
+                name: Religione
+                icon: mdi:book-cross
+                color: amber
+              - type: tile
+                entity: sensor.argo_edoardo_materia_educazione_motoria
+                name: Educazione motoria
+                icon: mdi:run
+                color: orange
+
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:calendar-check
+            heading: Compiti e impegni
+            heading_style: title
+            badges:
+              - type: entity
+                entity: sensor.argo_edoardo_compiti_da_fare
+                name: Da fare
+              - type: entity
+                entity: sensor.argo_edoardo_prossimi_impegni
+                name: Impegni
+          - type: markdown
+            title: Compiti da fare
+            content: |
+              {% set compiti = state_attr('sensor.argo_edoardo_compiti_da_fare', 'compiti') or [] %}
+              {% if compiti | count == 0 %}
+              **Nessun compito futuro da fare.**
+              {% else %}
+              {% for item in compiti[:8] %}
+              ## {{ item.get('materia') or 'Materia' }}
+
+              **Consegna:** {{ item.get('data_consegna') or item.get('data') or '' }}
+              {% if item.get('docente') %}**Docente:** {{ item.get('docente') }}{% endif %}
+              {% if item.get('ora') %}**Ora:** {{ item.get('ora') }}ª{% endif %}
+
+              {{ item.get('testo') or item.get('compito') or item.get('descrizione') or '' }}
+
+              ---
+              {% endfor %}
+              {% if compiti | count > 8 %}
+              _Mostrati 8 compiti su {{ compiti | count }}._
+              {% endif %}
+              {% endif %}
+          - type: markdown
+            title: Prossimi impegni
+            content: |
+              {% set impegni = state_attr('sensor.argo_edoardo_prossimi_impegni', 'impegni') or [] %}
+              {% if impegni | count == 0 %}
+              Nessun impegno imminente.
+              {% else %}
+              {% for item in impegni[:8] %}
+              ## {{ item.get('tipo') or 'Impegno' }} · {{ item.get('materia') or '' }}
+
+              **Data:** {{ item.get('data_consegna') or item.get('data') or '' }}
+
+              {{ item.get('testo') or item.get('attivita') or item.get('descrizione') or '' }}
+
+              ---
+              {% endfor %}
+              {% endif %}
+
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:clipboard-list
+            heading: Voti
+            heading_style: title
+            badges:
+              - type: entity
+                entity: sensor.argo_edoardo_voti
+                name: Totale
+              - type: entity
+                entity: sensor.argo_edoardo_ultimo_voto
+                name: Ultimo
+          - type: markdown
+            content: |
+              {% set voti = state_attr('sensor.argo_edoardo_voti', 'grades') or [] %}
+              {% if voti | count == 0 %}
+              Nessun voto disponibile.
+              {% else %}
+              | Data | Materia | Voto | Dettaglio |
+              |---|---|---:|---|
+              {% for item in voti[:15] %}
+              | {{ item.get('data') or '' }} | {{ item.get('materia') or 'Materia' }} | **{{ item.get('valore') or '' }}** | {{ item.get('descrizione') or item.get('prova') or '' }} |
+              {% endfor %}
+              {% endif %}
+
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:notebook
+            heading: Diario
+            heading_style: title
+            badges:
+              - type: entity
+                entity: sensor.argo_edoardo_attivita_svolte
+                name: Attivita
+              - type: entity
+                entity: sensor.argo_edoardo_registro
+                name: Registro
+          - type: markdown
+            title: Attivita svolte
+            content: |
+              {% set attivita = state_attr('sensor.argo_edoardo_attivita_svolte', 'attivita') or [] %}
+              {% if attivita | count == 0 %}
+              Nessuna attivita disponibile.
+              {% else %}
+              {% for item in attivita[:8] %}
+              ## {{ item.get('data') or '' }} · {{ item.get('materia') or 'Materia' }}
+
+              {% if item.get('ora') %}**Ora:** {{ item.get('ora') }}ª{% endif %}{% if item.get('docente') %} · **Docente:** {{ item.get('docente') }}{% endif %}
+
+              {{ item.get('testo') or item.get('attivita') or item.get('descrizione') or '' }}
+
+              ---
+              {% endfor %}
+              {% endif %}
+          - type: markdown
+            title: Registro
+            content: |
+              {% set registro = state_attr('sensor.argo_edoardo_registro', 'register') or [] %}
+              {% if registro | count == 0 %}
+              Nessun registro disponibile.
+              {% else %}
+              {% for item in registro[:8] %}
+              ## {{ item.get('data') or '' }} · {{ item.get('materia') or 'Materia' }}
+
+              {% if item.get('ora') %}**Ora:** {{ item.get('ora') }}ª{% endif %}{% if item.get('docente') %} · **Docente:** {{ item.get('docente') }}{% endif %}
+
+              {{ item.get('attivita') or item.get('testo') or item.get('descrizione') or '' }}
+
+              ---
+              {% endfor %}
+              {% endif %}
+
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:bullhorn
+            heading: Comunicazioni
+            heading_style: title
+            badges:
+              - type: entity
+                entity: sensor.argo_edoardo_aggiornamenti
+                name: Aggiornamenti
+              - type: entity
+                entity: sensor.argo_edoardo_bacheca
+                name: Bacheca
+          - type: markdown
+            title: Aggiornamenti
+            content: |
+              {% set aggiornamenti = state_attr('sensor.argo_edoardo_aggiornamenti', 'aggiornamenti') or [] %}
+              {% if aggiornamenti | count == 0 %}
+              Nessun aggiornamento recente.
+              {% else %}
+              {% for item in aggiornamenti[:8] %}
+              ## {{ item.get('data') or '' }} · {{ item.get('tipo') or 'Aggiornamento' }}
+
+              {% if item.get('titolo') %}**{{ item.get('titolo') }}**{% endif %}
+
+              {{ item.get('testo') or item.get('descrizione') or item.get('messaggio') or '' }}
+
+              ---
+              {% endfor %}
+              {% endif %}
+          - type: markdown
+            title: Bacheca
+            content: |
+              {% set bacheca = state_attr('sensor.argo_edoardo_bacheca', 'communications') or [] %}
+              {% if bacheca | count == 0 %}
+              Nessuna comunicazione in bacheca.
+              {% else %}
+              {% for item in bacheca[:8] %}
+              ## {{ item.get('data') or '' }} · {{ item.get('categoria') or 'Bacheca' }}
+
+              {% if item.get('titolo') %}**{{ item.get('titolo') }}**{% endif %}
+
+              {{ item.get('testo') or item.get('messaggio') or item.get('descrizione') or '' }}
+
+              ---
+              {% endfor %}
+              {% endif %}
+
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:view-dashboard
+            heading: Riepilogo
+            heading_style: title
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: sensor.argo_edoardo_assenze
+                name: Assenze
+              - entity: sensor.argo_edoardo_note
+                name: Note
+              - entity: sensor.argo_edoardo_bacheca_alunno
+                name: Bacheca alunno
+              - entity: sensor.argo_edoardo_lezioni
+                name: Lezioni
+              - entity: sensor.argo_edoardo_promemoria
+                name: Promemoria
+              - entity: sensor.argo_edoardo_compiti
+                name: Tutti i compiti
+              - entity: sensor.argo_edoardo_compiti_assegnati
+                name: Compiti assegnati
+              - entity: sensor.argo_edoardo_orario
+                name: Orario

@@ -1,0 +1,238 @@
+views:
+  - title: Francesco DIDUP
+    path: francesco-didup
+    icon: mdi:school
+    type: sections
+    max_columns: 4
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:school
+            heading: Argo Francesco
+            heading_style: title
+            badges:
+              - type: entity
+                entity: sensor.argo_francesco_argo_francesco_stato
+                name: Stato
+          - type: tile
+            entity: sensor.argo_francesco_argo_francesco_media_generale
+            name: Media
+            icon: mdi:chart-donut
+            color: green
+          - type: tile
+            entity: sensor.argo_francesco_argo_francesco_ultimo_voto
+            name: Ultimo voto
+            icon: mdi:clipboard-text
+            color: blue
+          - type: tile
+            entity: sensor.argo_francesco_argo_francesco_assenze
+            name: Assenze
+            icon: mdi:account-off
+            color: red
+          - type: tile
+            entity: sensor.argo_francesco_argo_francesco_bacheca
+            name: Bacheca
+            icon: mdi:bulletin-board
+            color: cyan
+
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:book-open-variant
+            heading: Materie
+            heading_style: title
+            badges:
+              - type: entity
+                entity: sensor.argo_francesco_argo_francesco_materie
+                name: Totale
+          - type: markdown
+            content: |
+              {% set materie = state_attr('sensor.argo_francesco_argo_francesco_media_generale', 'medie_materie') or state_attr('sensor.argo_francesco_argo_francesco_materie', 'materie') or [] %}
+              {% if materie | count == 0 %}
+              Nessuna materia disponibile.
+              {% else %}
+              | 📚 Materia | Media | Voti |
+              |---|---:|---:|
+              {% for item in materie %}
+              | {{ item.get('materia') or 'Materia' }} | **{{ item.get('media') or '' }}** | {{ item.get('voti') or item.get('numero_voti') or '' }} |
+              {% endfor %}
+              {% endif %}
+
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:calendar-check
+            heading: Compiti prossimi
+            heading_style: title
+            badges:
+              - type: entity
+                entity: sensor.argo_francesco_argo_francesco_compiti_da_fare
+                name: Da fare
+          - type: markdown
+            content: |
+              {% set compiti = state_attr('sensor.argo_francesco_argo_francesco_compiti_da_fare', 'compiti') or [] %}
+              {% if compiti | count == 0 %}
+              ✅ **Nessun compito futuro da fare.**
+              {% else %}
+              {% for item in compiti[:6] %}
+              ## 📝 {{ item.get('materia') or 'Materia' }}
+
+              **Consegna:** {{ item.get('data_consegna') or item.get('data') or '' }}
+              {% if item.get('docente') %}
+              **Docente:** {{ item.get('docente') }}
+              {% endif %}
+              {% if item.get('ora') %}
+              **Ora:** {{ item.get('ora') }}ª
+              {% endif %}
+
+              {{ item.get('testo') or item.get('compito') or item.get('descrizione') or '' }}
+
+              ---
+              {% endfor %}
+              {% if compiti | count > 6 %}
+              _Mostrati 6 compiti su {{ compiti | count }}._
+              {% endif %}
+              {% endif %}
+
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:clipboard-list
+            heading: Voti recenti
+            heading_style: title
+            badges:
+              - type: entity
+                entity: sensor.argo_francesco_argo_francesco_voti
+                name: Totale
+          - type: markdown
+            content: |
+              {% set voti = state_attr('sensor.argo_francesco_argo_francesco_voti', 'voti') or [] %}
+              {% if voti | count == 0 %}
+              Nessun voto disponibile.
+              {% else %}
+              | Data | Materia | Voto |
+              |---|---|---:|
+              {% for item in voti[:12] %}
+              | {{ item.get('data') or '' }} | {{ item.get('materia') or 'Materia' }} | **{{ item.get('valore') or '' }}** |
+              {% endfor %}
+              {% endif %}
+
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:clipboard-text-clock
+            heading: Attività svolte
+            heading_style: title
+            badges:
+              - type: entity
+                entity: sensor.argo_francesco_argo_francesco_attivita_svolte
+                name: Totale
+          - type: markdown
+            content: |
+              {% set attivita = state_attr('sensor.argo_francesco_argo_francesco_attivita_svolte', 'attivita') or [] %}
+              {% if attivita | count == 0 %}
+              Nessuna attività disponibile.
+              {% else %}
+              {% for item in attivita[:8] %}
+              ## 📖 {{ item.get('data') or '' }} · {{ item.get('materia') or 'Materia' }}
+
+              {% if item.get('ora') %}**Ora:** {{ item.get('ora') }}ª{% endif %}{% if item.get('docente') %} · **Docente:** {{ item.get('docente') }}{% endif %}
+
+              {{ item.get('testo') or item.get('attivita') or item.get('descrizione') or '' }}
+
+              ---
+              {% endfor %}
+              {% if attivita | count > 8 %}
+              _Mostrate 8 attività su {{ attivita | count }}._
+              {% endif %}
+              {% endif %}
+
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:notebook
+            heading: Registro
+            heading_style: title
+            badges:
+              - type: entity
+                entity: sensor.argo_francesco_argo_francesco_registro
+                name: Righe
+          - type: markdown
+            content: |
+              {% set registro = state_attr('sensor.argo_francesco_argo_francesco_registro', 'registro') or [] %}
+              {% if registro | count == 0 %}
+              Nessun registro disponibile.
+              {% else %}
+              {% for item in registro[:8] %}
+              ## 📘 {{ item.get('data') or '' }} · {{ item.get('materia') or 'Materia' }}
+
+              {% if item.get('ora') %}**Ora:** {{ item.get('ora') }}ª{% endif %}{% if item.get('docente') %} · **Docente:** {{ item.get('docente') }}{% endif %}
+
+              {{ item.get('attivita') or item.get('testo') or item.get('descrizione') or '' }}
+
+              ---
+              {% endfor %}
+              {% if registro | count > 8 %}
+              _Mostrate 8 righe registro su {{ registro | count }}._
+              {% endif %}
+              {% endif %}
+
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:bullhorn
+            heading: Bacheca
+            heading_style: title
+            badges:
+              - type: entity
+                entity: sensor.argo_francesco_argo_francesco_aggiornamenti
+                name: Aggiornamenti
+              - type: entity
+                entity: sensor.argo_francesco_argo_francesco_bacheca
+                name: Bacheca
+          - type: markdown
+            content: |
+              {% set aggiornamenti = state_attr('sensor.argo_francesco_argo_francesco_aggiornamenti', 'aggiornamenti') or [] %}
+              {% set bacheca = state_attr('sensor.argo_francesco_argo_francesco_bacheca', 'comunicazioni') or [] %}
+              {% if aggiornamenti | count == 0 and bacheca | count == 0 %}
+              Nessun aggiornamento recente.
+              {% else %}
+              {% for item in aggiornamenti[:5] %}
+              ## 🔔 {{ item.data }}{% if item.tipo %} · {{ item.tipo }}{% endif %}
+
+              {% if item.get('titolo') %}**{{ item.get('titolo') }}**{% endif %}
+
+              {{ item.get('testo') or item.get('descrizione') or item.get('messaggio') or '' }}
+
+              ---
+              {% endfor %}
+              {% for item in bacheca[:5] %}
+              ## 📌 {{ item.data | default('Bacheca') }}
+
+              {% if item.get('titolo') %}**{{ item.get('titolo') }}**{% endif %}
+
+              {{ item.get('testo') or item.get('descrizione') or item.get('messaggio') or item.get('oggetto') or '' }}
+
+              ---
+              {% endfor %}
+              {% endif %}
+
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:view-dashboard
+            heading: Riepilogo
+            heading_style: title
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: sensor.argo_francesco_argo_francesco_promemoria
+                name: ⏰ Promemoria
+              - entity: sensor.argo_francesco_argo_francesco_bacheca_alunno
+                name: 📄 Bacheca alunno
+              - entity: sensor.argo_francesco_argo_francesco_lezioni
+                name: 👨‍🏫 Lezioni
+              - entity: sensor.argo_francesco_argo_francesco_compiti
+                name: 🗂️ Tutti i compiti
+

@@ -1,0 +1,31 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Argo Family Dashboard",
+        "description": "Aggiungi uno studente Argo/didUP. Crea una configurazione separata per ogni figlio.",
+        "data": {
+          "child_name": "Nome figlio",
+          "school_code": "Codice scuola",
+          "username": "Nome utente",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossibile collegarsi ad Argo",
+      "invalid_auth": "Credenziali non valide",
+      "unknown": "Errore inatteso"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni Argo",
+        "data": {
+          "scan_interval": "Aggiorna ogni quanti minuti"
+        }
+      }
+    }
+  }
+}

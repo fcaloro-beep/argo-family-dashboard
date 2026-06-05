@@ -1,0 +1,6 @@
+{
+  "name": "Argo Family Dashboard",
+  "render_readme": true,
+  "domains": ["sensor"],
+  "country": ["IT"]
+}

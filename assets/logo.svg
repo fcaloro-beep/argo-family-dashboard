@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 150" role="img" aria-labelledby="title desc">
+  <title id="title">Argo Family Dashboard</title>
+  <desc id="desc">Argo style wordmark with four colored letter tiles.</desc>
+  <rect width="520" height="150" rx="28" fill="none"/>
+  <g font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="74" text-anchor="middle">
+    <rect x="14" y="18" width="118" height="114" rx="18" fill="#51aeea"/>
+    <text x="73" y="100" fill="#ffffff">A</text>
+    <rect x="142" y="18" width="118" height="114" rx="18" fill="#6ec35d"/>
+    <text x="201" y="100" fill="#ffffff">R</text>
+    <rect x="270" y="18" width="118" height="114" rx="18" fill="#f7a22b"/>
+    <text x="329" y="100" fill="#ffffff">G</text>
+    <rect x="398" y="18" width="108" height="114" rx="18" fill="#ef5b45"/>
+    <text x="452" y="100" fill="#ffffff">O</text>
+  </g>
+</svg>

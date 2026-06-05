@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Argo Family Dashboard icon">
+  <rect width="256" height="256" rx="52" fill="#ffffff"/>
+  <g font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="58" text-anchor="middle">
+    <rect x="22" y="24" width="98" height="98" rx="18" fill="#51aeea"/>
+    <text x="71" y="92" fill="#ffffff">A</text>
+    <rect x="136" y="24" width="98" height="98" rx="18" fill="#6ec35d"/>
+    <text x="185" y="92" fill="#ffffff">R</text>
+    <rect x="22" y="138" width="98" height="98" rx="18" fill="#f7a22b"/>
+    <text x="71" y="206" fill="#ffffff">G</text>
+    <rect x="136" y="138" width="98" height="98" rx="18" fill="#ef5b45"/>
+    <text x="185" y="206" fill="#ffffff">O</text>
+  </g>
+</svg>
