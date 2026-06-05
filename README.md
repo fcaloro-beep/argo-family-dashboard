@@ -1,10 +1,12 @@
 # Argo Family Dashboard for Home Assistant
 
-![Argo Family Dashboard](assets/logo.svg)
+<p align="center">
+  <img src="assets/logo.svg" alt="Argo Family Dashboard" width="360">
+</p>
 
-Dashboard familiare per visualizzare in Home Assistant i dati del registro
-elettronico Argo/didUP: medie, voti, materie, compiti, attivita, registro,
-bacheca e assenze.
+Integrazione non ufficiale Home Assistant per Argo/didUP pensata per famiglie:
+voti, materie, compiti, lezioni, registro, bacheca, assenze e aggiornamenti per
+ogni figlio.
 
 > Progetto non ufficiale e non collegato ad Argo Software S.r.l.
 
@@ -12,46 +14,42 @@ bacheca e assenze.
 
 Versione beta nativa: `0.4.1`.
 
-Questa repository e pensata per essere installabile da HACS come una normale
-custom integration Home Assistant.
+La repository e installabile da HACS come custom integration Home Assistant.
+Non richiede Docker e non richiede MQTT.
 
-## Esperienza utente prevista
+## Screenshot
 
-1. Installa da HACS.
-2. Riavvia Home Assistant.
-3. Vai in **Impostazioni > Dispositivi e servizi > Aggiungi integrazione**.
-4. Cerca **Argo Family Dashboard**.
-5. Inserisci i dati di un figlio:
+### Configurazione studente
+
+![Configurazione Argo Family Dashboard](docs/screenshots/login.png)
+
+## Installazione da HACS
+
+1. Apri HACS.
+2. Vai su **Repository personalizzati**.
+3. Inserisci questa repository:
+
+   ```text
+   https://github.com/fcaloro-beep/argo-family-dashboard
+   ```
+
+4. Categoria: **Integrazione**.
+5. Installa **Argo Family Dashboard**.
+6. Riavvia Home Assistant.
+
+## Configurazione
+
+1. Vai in **Impostazioni > Dispositivi e servizi**.
+2. Clicca **Aggiungi integrazione**.
+3. Cerca **Argo Family Dashboard**.
+4. Inserisci i dati di uno studente:
    - nome figlio;
    - codice scuola;
    - nome utente;
    - password.
-6. Ripeti la procedura per ogni figlio.
-7. Home Assistant crea le entita sensore per ogni figlio.
+5. Ripeti la procedura per ogni figlio.
 
-Non e richiesto Docker e non e richiesto MQTT.
-
-## Icona Home Assistant
-
-Da Home Assistant 2026.3 le custom integration possono includere direttamente
-le proprie immagini brand. Gli asset principali sono in:
-
-- `assets/icon.png`
-- `assets/logo.png`
-- `custom_components/argo_family_dashboard/brand/icon.png`
-- `custom_components/argo_family_dashboard/brand/logo.png`
-
-Non e necessario aprire una richiesta su `home-assistant/brands`.
-
-## Installazione HACS
-
-Quando la repository sara pubblicata su GitHub:
-
-1. apri HACS;
-2. aggiungi questa repository come repository personalizzato;
-3. categoria: `Integration`;
-4. installa `Argo Family Dashboard`;
-5. riavvia Home Assistant.
+Home Assistant crea un dispositivo separato per ogni studente.
 
 ## Sensori creati
 
@@ -60,7 +58,6 @@ Per ogni figlio vengono creati sensori come:
 - stato;
 - media generale;
 - materie;
-- sensori per singola materia;
 - voti;
 - ultimo voto;
 - compiti;
@@ -78,7 +75,8 @@ Per ogni figlio vengono creati sensori come:
 - note;
 - orario.
 
-Gli elenchi completi vengono esposti negli attributi dei sensori.
+Gli elenchi completi vengono esposti negli attributi dei sensori, cosi possono
+essere usati nelle plance Lovelace.
 
 ## Materie dinamiche
 
@@ -95,10 +93,8 @@ Se uno studente non ha voti o non ha materie disponibili, non vengono creati
 sensori materia inutili. Quando Argo iniziera a restituire nuove materie, queste
 appariranno automaticamente dopo il prossimo aggiornamento.
 
-Per questo motivo le plance di esempio usano due approcci:
-
-- riepilogo dinamico da `sensor.<studente>_materie`, consigliato per tutti;
-- sensori materia singoli solo dove esistono davvero per quello studente.
+Per una plancia compatibile con qualsiasi studente e consigliato usare il
+riepilogo dinamico da `sensor.<studente>_materie`.
 
 ## Entita principali
 
@@ -126,14 +122,25 @@ La repository include plance Lovelace di esempio per Edoardo e Francesco.
 Sono solo esempi: ogni utente puo duplicarle e sostituire il prefisso
 `argo_edoardo` con il nome del proprio figlio.
 
-Per una plancia compatibile con qualsiasi studente e consigliato usare il
-blocco dinamico delle materie, cosi le materie compaiono solo quando Argo le
-restituisce.
+Per una plancia compatibile con qualsiasi studente, usare il blocco dinamico
+delle materie: le materie compaiono solo quando Argo le restituisce.
+
+## Logo e brand
+
+Da Home Assistant 2026.3 le custom integration possono includere direttamente
+le proprie immagini brand. Gli asset principali sono in:
+
+- `assets/icon.png`
+- `assets/logo.png`
+- `custom_components/argo_family_dashboard/brand/icon.png`
+- `custom_components/argo_family_dashboard/brand/logo.png`
+
+Non e necessario aprire una richiesta su `home-assistant/brands`.
 
 ## Privacy
 
-Le credenziali Argo restano nel server dell'utente. Non vengono inviate a
-servizi terzi da questo progetto.
+Le credenziali Argo restano nel server Home Assistant dell'utente. Non vengono
+inviate a servizi terzi da questo progetto.
 
 ## Licenza
 
