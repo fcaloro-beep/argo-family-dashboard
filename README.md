@@ -23,6 +23,12 @@ Non richiede Docker e non richiede MQTT.
 
 ![Configurazione Argo Family Dashboard](docs/screenshots/login.png)
 
+### Plancia di esempio
+
+I dati nello screenshot sono dimostrativi.
+
+![Plancia esempio Argo Family Dashboard](docs/screenshots/dashboard-example.png)
+
 ## Installazione da HACS
 
 1. Apri HACS.
