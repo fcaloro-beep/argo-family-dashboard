@@ -1,7 +1,7 @@
 # Argo Family Dashboard for Home Assistant
 
 <p align="center">
-  <img src="assets/logo.png" alt="Argo Family Dashboard" width="360">
+  <img src="https://raw.githubusercontent.com/fcaloro-beep/argo-family-dashboard/main/assets/logo.png" alt="Argo Family Dashboard" width="360">
 </p>
 
 Integrazione non ufficiale Home Assistant per Argo/didUP pensata per famiglie:
@@ -12,22 +12,30 @@ ogni figlio.
 
 ## Stato del progetto
 
-Versione beta nativa: `0.4.6`.
+Versione beta nativa: `0.4.8`.
 
 La repository e installabile da HACS come custom integration Home Assistant.
 Non richiede Docker e non richiede MQTT.
 
 ## Screenshot
 
+### Integrazione in Home Assistant
+
+![Integrazione Argo Family Dashboard](https://raw.githubusercontent.com/fcaloro-beep/argo-family-dashboard/main/docs/screenshots/integration-overview.png)
+
 ### Configurazione studente
 
-![Configurazione Argo Family Dashboard](docs/screenshots/login.png)
+![Configurazione Argo Family Dashboard](https://raw.githubusercontent.com/fcaloro-beep/argo-family-dashboard/main/docs/screenshots/setup-flow.png)
+
+### Opzioni aggiornamento
+
+![Opzioni Argo Family Dashboard](https://raw.githubusercontent.com/fcaloro-beep/argo-family-dashboard/main/docs/screenshots/options-flow.png)
 
 ### Plancia di esempio
 
 I dati nello screenshot sono dimostrativi.
 
-![Plancia esempio Argo Family Dashboard](docs/screenshots/dashboard-example.png)
+![Plancia esempio Argo Family Dashboard](https://raw.githubusercontent.com/fcaloro-beep/argo-family-dashboard/main/docs/screenshots/dashboard-example.png)
 
 ## Installazione da HACS
 
