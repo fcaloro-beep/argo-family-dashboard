@@ -17,20 +17,20 @@ Versione beta nativa: `0.4.13`.
 La repository e installabile da HACS come custom integration Home Assistant.
 Non richiede Docker e non richiede MQTT.
 
-La versione `0.4.9` migliora il calcolo delle medie quando Argo restituisce
+La versione `4.9` migliora il calcolo delle medie quando Argo restituisce
 voti non numerici, ad esempio `-`, `S` o `NS`: questi valori non vengono
 trattati come zero.
 
-La versione `0.4.10` aggiunge il sensore `Ultimo aggiornamento` e riduce gli
+La versione `4.10` aggiunge il sensore `Ultimo aggiornamento` e riduce gli
 attributi troppo grandi nei sensori con molti voti, compiti o registri, evitando
 avvisi del database di Home Assistant.
 
-La versione `0.4.11` alleggerisce ulteriormente gli attributi rimuovendo i dati
+La versione `4.11` alleggerisce ulteriormente gli attributi rimuovendo i dati
 grezzi interni dagli elenchi esposti ai sensori.
 
-La versione `0.4.12` applica la stessa pulizia anche al sensore `Ultimo voto`.
+La versione `4.12` applica la stessa pulizia anche al sensore `Ultimo voto`.
 
-La versione `0.4.13` ricalcola la media generale dalle medie materia pulite,
+La versione `4.13` ricalcola la media generale dalle medie materia pulite,
 quando disponibili, e aggiunge un'opzione per scegliere quanti elementi mostrare
 negli attributi dei sensori.
 
