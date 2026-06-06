@@ -93,8 +93,8 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         icon="mdi:clipboard-text",
         value_fn=lambda data: (data.get("latest_grade") or {}).get("valore") or "Nessun voto",
         attr_fn=lambda data: {
-            "latest_grade": data.get("latest_grade"),
-            "voti_recenti": data.get("grades", [])[:12],
+            "latest_grade": _compact(data.get("latest_grade")),
+            "voti_recenti": _limit(data.get("grades", []), 12),
         },
     ),
     ArgoSensorDescription(

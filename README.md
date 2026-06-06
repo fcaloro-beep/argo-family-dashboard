@@ -12,7 +12,7 @@ ogni figlio.
 
 ## Stato del progetto
 
-Versione beta nativa: `0.4.11`.
+Versione beta nativa: `0.4.12`.
 
 La repository e installabile da HACS come custom integration Home Assistant.
 Non richiede Docker e non richiede MQTT.
@@ -27,6 +27,8 @@ avvisi del database di Home Assistant.
 
 La versione `0.4.11` alleggerisce ulteriormente gli attributi rimuovendo i dati
 grezzi interni dagli elenchi esposti ai sensori.
+
+La versione `0.4.12` applica la stessa pulizia anche al sensore `Ultimo voto`.
 
 ## Screenshot
 
