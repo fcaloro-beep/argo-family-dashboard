@@ -56,7 +56,7 @@ class ArgoFamilyDashboardConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 class ArgoFamilyDashboardOptionsFlow(config_entries.OptionsFlow):
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
-        self.config_entry = config_entry
+        self._config_entry = config_entry
 
     async def async_step_init(self, user_input: dict | None = None) -> FlowResult:
         if user_input is not None:
@@ -66,7 +66,7 @@ class ArgoFamilyDashboardOptionsFlow(config_entries.OptionsFlow):
             {
                 vol.Optional(
                     "scan_interval",
-                    default=self.config_entry.options.get("scan_interval", 30),
+                    default=self._config_entry.options.get("scan_interval", 30),
                 ): vol.All(vol.Coerce(int), vol.Range(min=5, max=360)),
             }
         )

@@ -12,7 +12,7 @@ ogni figlio.
 
 ## Stato del progetto
 
-Versione beta nativa: `0.4.4`.
+Versione beta nativa: `0.4.6`.
 
 La repository e installabile da HACS come custom integration Home Assistant.
 Non richiede Docker e non richiede MQTT.
@@ -62,6 +62,7 @@ Home Assistant crea un dispositivo separato per ogni studente.
 Per ogni figlio vengono creati sensori come:
 
 - stato;
+- info studente;
 - media generale;
 - materie;
 - voti;
@@ -83,6 +84,11 @@ Per ogni figlio vengono creati sensori come:
 
 Gli elenchi completi vengono esposti negli attributi dei sensori, cosi possono
 essere usati nelle plance Lovelace.
+
+Il sensore `Info studente` espone anche gli attributi restituiti da Argo per
+profilo, codice scuola, eventuale nome scuola, classe e prime informazioni
+orario. I campi disponibili possono variare in base alla scuola e al profilo
+Argo/didUP.
 
 ## Materie dinamiche
 
