@@ -12,7 +12,7 @@ ogni figlio.
 
 ## Stato del progetto
 
-Versione beta nativa: `0.4.9`.
+Versione beta nativa: `0.4.10`.
 
 La repository e installabile da HACS come custom integration Home Assistant.
 Non richiede Docker e non richiede MQTT.
@@ -20,6 +20,10 @@ Non richiede Docker e non richiede MQTT.
 La versione `0.4.9` migliora il calcolo delle medie quando Argo restituisce
 voti non numerici, ad esempio `-`, `S` o `NS`: questi valori non vengono
 trattati come zero.
+
+La versione `0.4.10` aggiunge il sensore `Ultimo aggiornamento` e riduce gli
+attributi troppo grandi nei sensori con molti voti, compiti o registri, evitando
+avvisi del database di Home Assistant.
 
 ## Screenshot
 

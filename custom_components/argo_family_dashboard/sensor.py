@@ -13,6 +13,8 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN
 from .coordinator import ArgoFamilyCoordinator
 
+MAX_SENSOR_ATTRIBUTE_ITEMS = 40
+
 
 @dataclass(frozen=True, kw_only=True)
 class ArgoSensorDescription(SensorEntityDescription):
@@ -28,6 +30,17 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         icon="mdi:eye",
         value_fn=lambda data: data.get("status"),
         attr_fn=lambda data: {"updated_at": data.get("updated_at")},
+    ),
+    ArgoSensorDescription(
+        key="last_update",
+        name="Ultimo aggiornamento",
+        translation_key="last_update",
+        icon="mdi:clock-check-outline",
+        value_fn=lambda data: data.get("updated_at"),
+        attr_fn=lambda data: {
+            "updated_at": data.get("updated_at"),
+            "status": data.get("status"),
+        },
     ),
     ArgoSensorDescription(
         key="student_info",
@@ -68,8 +81,8 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         icon="mdi:clipboard-list",
         value_fn=lambda data: len(data.get("grades", [])),
         attr_fn=lambda data: {
-            "grades": data.get("grades", []),
-            "per_materia": data.get("grades_by_subject", {}),
+            "grades": _limit(data.get("grades", [])),
+            "totale": len(data.get("grades", [])),
         },
     ),
     ArgoSensorDescription(
@@ -97,7 +110,10 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         translation_key="updates",
         icon="mdi:bell-badge",
         value_fn=lambda data: len(data.get("updates", [])),
-        attr_fn=lambda data: {"aggiornamenti": data.get("updates", [])},
+        attr_fn=lambda data: {
+            "aggiornamenti": _limit(data.get("updates", [])),
+            "totale": len(data.get("updates", [])),
+        },
     ),
     ArgoSensorDescription(
         key="assignments",
@@ -105,7 +121,10 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         translation_key="assignments",
         icon="mdi:calendar-check",
         value_fn=lambda data: len(data.get("assignments", [])),
-        attr_fn=lambda data: {"assignments": data.get("assignments", [])},
+        attr_fn=lambda data: {
+            "assignments": _limit(data.get("assignments", [])),
+            "totale": len(data.get("assignments", [])),
+        },
     ),
     ArgoSensorDescription(
         key="pending_assignments",
@@ -121,7 +140,10 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         translation_key="assigned_assignments",
         icon="mdi:history",
         value_fn=lambda data: len(data.get("assigned_assignments", [])),
-        attr_fn=lambda data: {"compiti": data.get("assigned_assignments", [])},
+        attr_fn=lambda data: {
+            "compiti": _limit(data.get("assigned_assignments", [])),
+            "totale": len(data.get("assigned_assignments", [])),
+        },
     ),
     ArgoSensorDescription(
         key="activities",
@@ -129,7 +151,10 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         translation_key="activities",
         icon="mdi:clipboard-text-clock",
         value_fn=lambda data: len(data.get("activities", [])),
-        attr_fn=lambda data: {"attivita": data.get("activities", [])},
+        attr_fn=lambda data: {
+            "attivita": _limit(data.get("activities", [])),
+            "totale": len(data.get("activities", [])),
+        },
     ),
     ArgoSensorDescription(
         key="register",
@@ -137,7 +162,10 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         translation_key="register",
         icon="mdi:notebook",
         value_fn=lambda data: len(data.get("register", [])),
-        attr_fn=lambda data: {"register": data.get("register", [])},
+        attr_fn=lambda data: {
+            "register": _limit(data.get("register", [])),
+            "totale": len(data.get("register", [])),
+        },
     ),
     ArgoSensorDescription(
         key="absences",
@@ -153,7 +181,10 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         translation_key="lessons",
         icon="mdi:teach",
         value_fn=lambda data: len(data.get("lessons", [])),
-        attr_fn=lambda data: {"lezioni": data.get("lessons", [])},
+        attr_fn=lambda data: {
+            "lezioni": _limit(data.get("lessons", [])),
+            "totale": len(data.get("lessons", [])),
+        },
     ),
     ArgoSensorDescription(
         key="memos",
@@ -169,7 +200,10 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         translation_key="communications",
         icon="mdi:bulletin-board",
         value_fn=lambda data: len(data.get("communications", [])),
-        attr_fn=lambda data: {"communications": data.get("communications", [])},
+        attr_fn=lambda data: {
+            "communications": _limit(data.get("communications", [])),
+            "totale": len(data.get("communications", [])),
+        },
     ),
     ArgoSensorDescription(
         key="student_communications",
@@ -284,7 +318,8 @@ class ArgoSubjectSensor(CoordinatorEntity[ArgoFamilyCoordinator], SensorEntity):
             "materia": self._subject_name,
             "media": subject.get("media") if subject else None,
             "numero_voti": subject.get("voti") if subject else 0,
-            "voti": grades,
+            "voti": _limit(grades),
+            "totale_voti": len(grades),
         }
 
     def _subject(self) -> dict[str, Any] | None:
@@ -305,3 +340,9 @@ def _slugify(value: str) -> str:
             result.append("_")
             previous_sep = True
     return "".join(result).strip("_")[:48] or "materia"
+
+
+def _limit(items: Any, limit: int = MAX_SENSOR_ATTRIBUTE_ITEMS) -> Any:
+    if isinstance(items, list):
+        return items[:limit]
+    return items
