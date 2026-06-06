@@ -278,6 +278,11 @@ class ArgoFamilyClient:
 
         subjects = self._build_subjects(raw, grades)
         average = _number_or_none(raw.get("mediaGenerale"))
+        numeric_subject_averages = [
+            subject["media"] for subject in subjects if subject.get("media") is not None
+        ]
+        if (average is None or average == 0.0) and numeric_subject_averages:
+            average = _average(numeric_subject_averages)
         activities = [
             item for item in register if item.get("attivita")
         ]
@@ -341,16 +346,28 @@ class ArgoFamilyClient:
         media_materie = raw.get("mediaMaterie") or {}
         lista_materie = raw.get("listaMaterie") or []
         by_pk = {str(item.get("pk")): item.get("materia") for item in lista_materie}
+
+        numeric_by_subject: dict[str, list[float]] = {}
+        for grade in grades:
+            subject = grade.get("materia") or ""
+            value = _number_or_none(grade.get("valore"))
+            if subject and value is not None:
+                numeric_by_subject.setdefault(subject, []).append(value)
+
         subjects = []
 
         for pk, item in media_materie.items():
             if not isinstance(item, dict) or "mediaMateria" not in item:
                 continue
+            subject_name = by_pk.get(str(pk)) or str(pk)
+            average = _number_or_none(item.get("mediaMateria"))
+            if average == 0.0 and item.get("numVoti", 0) > 0:
+                average = _average(numeric_by_subject.get(subject_name, []))
             subjects.append(
                 {
-                    "materia": by_pk.get(str(pk)) or str(pk),
+                    "materia": subject_name,
                     "pk": pk,
-                    "media": _number_or_none(item.get("mediaMateria")),
+                    "media": average,
                     "voti": item.get("numVoti", 0),
                 }
             )
