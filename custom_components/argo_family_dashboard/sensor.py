@@ -13,7 +13,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN
 from .coordinator import ArgoFamilyCoordinator
 
-MAX_SENSOR_ATTRIBUTE_ITEMS = 20
+DEFAULT_SENSOR_ATTRIBUTE_ITEMS = 40
 MAX_ATTRIBUTE_TEXT_LENGTH = 500
 
 
@@ -82,7 +82,7 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         icon="mdi:clipboard-list",
         value_fn=lambda data: len(data.get("grades", [])),
         attr_fn=lambda data: {
-            "grades": _limit(data.get("grades", [])),
+            "grades": _limit(data.get("grades", []), data.get("attribute_limit")),
             "totale": len(data.get("grades", [])),
         },
     ),
@@ -112,7 +112,7 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         icon="mdi:bell-badge",
         value_fn=lambda data: len(data.get("updates", [])),
         attr_fn=lambda data: {
-            "aggiornamenti": _limit(data.get("updates", [])),
+            "aggiornamenti": _limit(data.get("updates", []), data.get("attribute_limit")),
             "totale": len(data.get("updates", [])),
         },
     ),
@@ -123,7 +123,7 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         icon="mdi:calendar-check",
         value_fn=lambda data: len(data.get("assignments", [])),
         attr_fn=lambda data: {
-            "assignments": _limit(data.get("assignments", [])),
+            "assignments": _limit(data.get("assignments", []), data.get("attribute_limit")),
             "totale": len(data.get("assignments", [])),
         },
     ),
@@ -142,7 +142,7 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         icon="mdi:history",
         value_fn=lambda data: len(data.get("assigned_assignments", [])),
         attr_fn=lambda data: {
-            "compiti": _limit(data.get("assigned_assignments", [])),
+            "compiti": _limit(data.get("assigned_assignments", []), data.get("attribute_limit")),
             "totale": len(data.get("assigned_assignments", [])),
         },
     ),
@@ -153,7 +153,7 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         icon="mdi:clipboard-text-clock",
         value_fn=lambda data: len(data.get("activities", [])),
         attr_fn=lambda data: {
-            "attivita": _limit(data.get("activities", [])),
+            "attivita": _limit(data.get("activities", []), data.get("attribute_limit")),
             "totale": len(data.get("activities", [])),
         },
     ),
@@ -164,7 +164,7 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         icon="mdi:notebook",
         value_fn=lambda data: len(data.get("register", [])),
         attr_fn=lambda data: {
-            "register": _limit(data.get("register", [])),
+            "register": _limit(data.get("register", []), data.get("attribute_limit")),
             "totale": len(data.get("register", [])),
         },
     ),
@@ -183,7 +183,7 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         icon="mdi:teach",
         value_fn=lambda data: len(data.get("lessons", [])),
         attr_fn=lambda data: {
-            "lezioni": _limit(data.get("lessons", [])),
+            "lezioni": _limit(data.get("lessons", []), data.get("attribute_limit")),
             "totale": len(data.get("lessons", [])),
         },
     ),
@@ -202,7 +202,7 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         icon="mdi:bulletin-board",
         value_fn=lambda data: len(data.get("communications", [])),
         attr_fn=lambda data: {
-            "communications": _limit(data.get("communications", [])),
+            "communications": _limit(data.get("communications", []), data.get("attribute_limit")),
             "totale": len(data.get("communications", [])),
         },
     ),
@@ -319,7 +319,7 @@ class ArgoSubjectSensor(CoordinatorEntity[ArgoFamilyCoordinator], SensorEntity):
             "materia": self._subject_name,
             "media": subject.get("media") if subject else None,
             "numero_voti": subject.get("voti") if subject else 0,
-            "voti": _limit(grades),
+            "voti": _limit(grades, (self.coordinator.data or {}).get("attribute_limit")),
             "totale_voti": len(grades),
         }
 
@@ -343,21 +343,26 @@ def _slugify(value: str) -> str:
     return "".join(result).strip("_")[:48] or "materia"
 
 
-def _limit(items: Any, limit: int = MAX_SENSOR_ATTRIBUTE_ITEMS) -> Any:
+def _limit(items: Any, limit: Any = None) -> Any:
+    try:
+        limit = int(limit if limit is not None else DEFAULT_SENSOR_ATTRIBUTE_ITEMS)
+    except (TypeError, ValueError):
+        limit = DEFAULT_SENSOR_ATTRIBUTE_ITEMS
+    limit = max(5, min(limit, 200))
     if isinstance(items, list):
-        return [_compact(item) for item in items[:limit]]
+        return [_compact(item, limit) for item in items[:limit]]
     return items
 
 
-def _compact(value: Any) -> Any:
+def _compact(value: Any, limit: int = DEFAULT_SENSOR_ATTRIBUTE_ITEMS) -> Any:
     if isinstance(value, dict):
         return {
-            key: _compact(item)
+            key: _compact(item, limit)
             for key, item in value.items()
             if key != "raw"
         }
     if isinstance(value, list):
-        return [_compact(item) for item in value[:MAX_SENSOR_ATTRIBUTE_ITEMS]]
+        return [_compact(item, limit) for item in value[:limit]]
     if isinstance(value, str) and len(value) > MAX_ATTRIBUTE_TEXT_LENGTH:
         return value[:MAX_ATTRIBUTE_TEXT_LENGTH].rstrip() + "..."
     return value

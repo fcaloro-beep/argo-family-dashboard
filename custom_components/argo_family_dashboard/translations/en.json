@@ -23,7 +23,8 @@
       "init": {
         "title": "Argo options",
         "data": {
-          "scan_interval": "Update interval in minutes"
+          "scan_interval": "Update interval in minutes",
+          "attribute_limit": "Maximum items in attributes"
         }
       }
     }

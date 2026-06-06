@@ -23,7 +23,8 @@
       "init": {
         "title": "Opzioni Argo",
         "data": {
-          "scan_interval": "Aggiorna ogni quanti minuti"
+          "scan_interval": "Aggiorna ogni quanti minuti",
+          "attribute_limit": "Elementi massimi negli attributi"
         }
       }
     }

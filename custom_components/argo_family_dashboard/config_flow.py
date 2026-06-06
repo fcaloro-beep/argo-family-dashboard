@@ -68,6 +68,10 @@ class ArgoFamilyDashboardOptionsFlow(config_entries.OptionsFlow):
                     "scan_interval",
                     default=self._config_entry.options.get("scan_interval", 30),
                 ): vol.All(vol.Coerce(int), vol.Range(min=5, max=360)),
+                vol.Optional(
+                    "attribute_limit",
+                    default=self._config_entry.options.get("attribute_limit", 40),
+                ): vol.All(vol.Coerce(int), vol.Range(min=5, max=200)),
             }
         )
         return self.async_show_form(step_id="init", data_schema=schema)

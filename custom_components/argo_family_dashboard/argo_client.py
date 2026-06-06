@@ -277,12 +277,14 @@ class ArgoFamilyClient:
         ]
 
         subjects = self._build_subjects(raw, grades)
-        average = _number_or_none(raw.get("mediaGenerale"))
         numeric_subject_averages = [
             subject["media"] for subject in subjects if subject.get("media") is not None
         ]
-        if (average is None or average == 0.0) and numeric_subject_averages:
-            average = _average(numeric_subject_averages)
+        average = (
+            _average(numeric_subject_averages)
+            if numeric_subject_averages
+            else _number_or_none(raw.get("mediaGenerale"))
+        )
         activities = [
             item for item in register if item.get("attivita")
         ]
@@ -316,6 +318,7 @@ class ArgoFamilyClient:
                 keys=("classe", "desClasse", "classeDescrizione", "sezione", "annoCorso"),
             ),
             "student_name": self.child_name,
+            "attribute_limit": int(self.options.get("attribute_limit", 40)),
             "status": "ok",
             "updated_at": datetime.now().isoformat(timespec="seconds"),
             "average": average,

@@ -12,7 +12,7 @@ ogni figlio.
 
 ## Stato del progetto
 
-Versione beta nativa: `0.4.12`.
+Versione beta nativa: `0.4.13`.
 
 La repository e installabile da HACS come custom integration Home Assistant.
 Non richiede Docker e non richiede MQTT.
@@ -29,6 +29,10 @@ La versione `0.4.11` alleggerisce ulteriormente gli attributi rimuovendo i dati
 grezzi interni dagli elenchi esposti ai sensori.
 
 La versione `0.4.12` applica la stessa pulizia anche al sensore `Ultimo voto`.
+
+La versione `0.4.13` ricalcola la media generale dalle medie materia pulite,
+quando disponibili, e aggiunge un'opzione per scegliere quanti elementi mostrare
+negli attributi dei sensori.
 
 ## Screenshot
 
