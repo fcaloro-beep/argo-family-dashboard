@@ -291,6 +291,25 @@ class ArgoFamilyClient:
 
         return {
             "student": self.login_data or {},
+            "profile": self.profile or {},
+            "school_code": self.school_code,
+            "school_name": _first_value(
+                self.profile or {},
+                self.login_data or {},
+                keys=(
+                    "desScuola",
+                    "denominazioneScuola",
+                    "scuola",
+                    "nomeScuola",
+                    "istituto",
+                    "desIstituto",
+                ),
+            ),
+            "class_name": _first_value(
+                self.profile or {},
+                self.login_data or {},
+                keys=("classe", "desClasse", "classeDescrizione", "sezione", "annoCorso"),
+            ),
             "student_name": self.child_name,
             "status": "ok",
             "updated_at": datetime.now().isoformat(timespec="seconds"),
@@ -646,3 +665,28 @@ def _deep_get(value: Any, *keys: str) -> Any:
             return None
         current = current.get(key)
     return current
+
+
+def _first_value(*sources: dict[str, Any], keys: tuple[str, ...]) -> Any:
+    for source in sources:
+        found = _find_first_key(source, keys)
+        if found not in (None, ""):
+            return found
+    return None
+
+
+def _find_first_key(value: Any, keys: tuple[str, ...]) -> Any:
+    if isinstance(value, dict):
+        for key in keys:
+            if key in value and value[key] not in (None, ""):
+                return value[key]
+        for item in value.values():
+            found = _find_first_key(item, keys)
+            if found not in (None, ""):
+                return found
+    elif isinstance(value, list):
+        for item in value:
+            found = _find_first_key(item, keys)
+            if found not in (None, ""):
+                return found
+    return None

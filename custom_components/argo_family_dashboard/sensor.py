@@ -30,6 +30,22 @@ SENSORS: tuple[ArgoSensorDescription, ...] = (
         attr_fn=lambda data: {"updated_at": data.get("updated_at")},
     ),
     ArgoSensorDescription(
+        key="student_info",
+        name="Info studente",
+        translation_key="student_info",
+        icon="mdi:account-school",
+        value_fn=lambda data: data.get("student_name"),
+        attr_fn=lambda data: {
+            "nome": data.get("student_name"),
+            "codice_scuola": data.get("school_code"),
+            "nome_scuola": data.get("school_name"),
+            "classe": data.get("class_name"),
+            "profilo": data.get("profile", {}),
+            "studente": data.get("student", {}),
+            "orario": data.get("schedule", [])[:20],
+        },
+    ),
+    ArgoSensorDescription(
         key="average",
         name="Media generale",
         translation_key="average",
