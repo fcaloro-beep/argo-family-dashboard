@@ -13,7 +13,8 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN
 from .coordinator import ArgoFamilyCoordinator
 
-MAX_SENSOR_ATTRIBUTE_ITEMS = 40
+MAX_SENSOR_ATTRIBUTE_ITEMS = 20
+MAX_ATTRIBUTE_TEXT_LENGTH = 500
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -344,5 +345,19 @@ def _slugify(value: str) -> str:
 
 def _limit(items: Any, limit: int = MAX_SENSOR_ATTRIBUTE_ITEMS) -> Any:
     if isinstance(items, list):
-        return items[:limit]
+        return [_compact(item) for item in items[:limit]]
     return items
+
+
+def _compact(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {
+            key: _compact(item)
+            for key, item in value.items()
+            if key != "raw"
+        }
+    if isinstance(value, list):
+        return [_compact(item) for item in value[:MAX_SENSOR_ATTRIBUTE_ITEMS]]
+    if isinstance(value, str) and len(value) > MAX_ATTRIBUTE_TEXT_LENGTH:
+        return value[:MAX_ATTRIBUTE_TEXT_LENGTH].rstrip() + "..."
+    return value
