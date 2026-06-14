@@ -12,7 +12,7 @@ ogni figlio.
 
 ## Stato del progetto
 
-Versione beta nativa: `4.13`.
+Versione beta nativa: `4.15`.
 
 La repository e installabile da HACS come custom integration Home Assistant.
 Non richiede Docker e non richiede MQTT.
@@ -33,6 +33,10 @@ La versione `4.12` applica la stessa pulizia anche al sensore `Ultimo voto`.
 La versione `4.13` ricalcola la media generale dalle medie materia pulite,
 quando disponibili, e aggiunge un'opzione per scegliere quanti elementi mostrare
 negli attributi dei sensori.
+
+La versione `4.15` aggiunge il supporto agli account Argo con piu alunni:
+dopo l'inserimento delle credenziali, se Argo restituisce piu profili, Home
+Assistant mostra una scelta e salva l'alunno selezionato nella configurazione.
 
 ## Screenshot
 
@@ -73,12 +77,13 @@ I dati nello screenshot sono dimostrativi.
 1. Vai in **Impostazioni > Dispositivi e servizi**.
 2. Clicca **Aggiungi integrazione**.
 3. Cerca **Argo Family Dashboard**.
-4. Inserisci i dati di uno studente:
-   - nome figlio;
+4. Inserisci le credenziali Argo/didUP:
    - codice scuola;
    - nome utente;
    - password.
-5. Ripeti la procedura per ogni figlio.
+5. Se l'account contiene piu alunni, seleziona quale figlio configurare.
+6. Ripeti la procedura per ogni altro figlio, anche usando le stesse
+   credenziali.
 
 Home Assistant crea un dispositivo separato per ogni studente.
 

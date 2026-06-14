@@ -37,6 +37,8 @@ class ArgoFamilyClient:
         self.username = data["username"]
         self.password = data["password"]
         self.child_name = data.get("child_name") or data.get("name") or self.username
+        self.student_id = data.get("student_id")
+        self.student_index = data.get("student_index")
         self.options = options or {}
         self.token: dict[str, Any] | None = None
         self.login_data: dict[str, Any] | None = None
@@ -55,11 +57,25 @@ class ArgoFamilyClient:
         except Exception as err:
             raise ArgoFamilyError(str(err)) from err
 
+    async def async_get_students(self) -> list[dict[str, Any]]:
+        try:
+            login_link = self._generate_login_link()
+            code = await self._get_code(login_link)
+            self.token = await self._get_token(login_link, code)
+            rows = await self._get_login_rows()
+            return [_student_option(row, index) for index, row in enumerate(rows)]
+        except ArgoFamilyError:
+            raise
+        except (ClientError, TimeoutError) as err:
+            raise ArgoFamilyError(f"Errore rete Argo: {err}") from err
+        except Exception as err:
+            raise ArgoFamilyError(str(err)) from err
+
     async def _login(self) -> None:
         login_link = self._generate_login_link()
         code = await self._get_code(login_link)
         self.token = await self._get_token(login_link, code)
-        self.login_data = await self._get_login_data()
+        self.login_data = self._select_login_data(await self._get_login_rows())
         self.profile = await self._get_profile()
         self.dashboard = await self._get_dashboard()
 
@@ -200,7 +216,7 @@ class ArgoFamilyClient:
                 raise ArgoFamilyError(data.get("msg") or f"Errore API /{path}")
             return data
 
-    async def _get_login_data(self) -> dict[str, Any]:
+    async def _get_login_rows(self) -> list[dict[str, Any]]:
         data = await self._api_request(
             "login",
             method="POST",
@@ -213,6 +229,26 @@ class ArgoFamilyClient:
         rows = data.get("data") or []
         if not rows:
             raise ArgoFamilyError("Login Argo riuscito ma nessun profilo trovato")
+        return rows
+
+    def _select_login_data(self, rows: list[dict[str, Any]]) -> dict[str, Any]:
+        if self.student_id:
+            for index, row in enumerate(rows):
+                if _student_key(row, index) == self.student_id:
+                    return row
+
+        if self.student_index is not None:
+            try:
+                return rows[int(self.student_index)]
+            except (IndexError, TypeError, ValueError):
+                pass
+
+        requested_name = _normalize(self.child_name)
+        if requested_name:
+            for row in rows:
+                if _normalize(_student_name(row)) == requested_name:
+                    return row
+
         return rows[0]
 
     async def _get_profile(self) -> dict[str, Any]:
@@ -643,6 +679,53 @@ def _group_by(items: list[dict[str, Any]], key: str) -> dict[str, list[dict[str,
     return result
 
 
+def _student_option(row: dict[str, Any], index: int) -> dict[str, Any]:
+    return {
+        "id": _student_key(row, index),
+        "index": index,
+        "name": _student_name(row) or f"Studente {index + 1}",
+        "raw": row,
+    }
+
+
+def _student_key(row: dict[str, Any], index: int) -> str:
+    for key in (
+        "idAlunno",
+        "codAlunno",
+        "codiceAlunno",
+        "id",
+        "pk",
+        "pkAlunno",
+        "codice",
+    ):
+        value = row.get(key)
+        if value not in (None, ""):
+            return f"{key}:{value}"
+    return f"index:{index}"
+
+
+def _student_name(row: dict[str, Any]) -> str | None:
+    direct = _first_value(
+        row,
+        keys=(
+            "nomeAlunno",
+            "desAlunno",
+            "alunno",
+            "nominativo",
+            "nome",
+            "nomeUtente",
+            "intestazione",
+        ),
+    )
+    if direct not in (None, "") and not isinstance(direct, (dict, list)):
+        return str(direct)
+
+    first_name = _first_value(row, keys=("nome", "firstName", "nomeStudente"))
+    last_name = _first_value(row, keys=("cognome", "lastName", "cognomeStudente"))
+    full_name = " ".join(str(item) for item in (first_name, last_name) if item)
+    return full_name or None
+
+
 def _today_key() -> str:
     return date.today().isoformat()
 
@@ -661,6 +744,10 @@ def _clean(value: Any) -> str:
     if value is None:
         return ""
     return " ".join(str(value).replace("\n", " ").split())
+
+
+def _normalize(value: Any) -> str:
+    return _clean(value).casefold()
 
 
 def _number_or_none(value: Any) -> float | None:

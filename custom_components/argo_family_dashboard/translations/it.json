@@ -3,12 +3,19 @@
     "step": {
       "user": {
         "title": "Argo Family Dashboard",
-        "description": "Aggiungi uno studente Argo/didUP. Crea una configurazione separata per ogni figlio.",
+        "description": "Inserisci le credenziali Argo/didUP. Se l'account contiene piu alunni, potrai scegliere quale configurare nello step successivo.",
         "data": {
-          "child_name": "Nome figlio",
           "school_code": "Codice scuola",
           "username": "Nome utente",
           "password": "Password"
+        }
+      },
+      "student": {
+        "title": "Seleziona alunno",
+        "description": "Scegli quale alunno associare a questa configurazione. Ripeti la procedura per aggiungere altri figli dello stesso account.",
+        "data": {
+          "student_id": "Alunno",
+          "child_name": "Nome visualizzato"
         }
       }
     },

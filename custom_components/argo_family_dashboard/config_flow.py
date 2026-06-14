@@ -7,35 +7,38 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.data_entry_flow import FlowResult
 
 from .argo_client import ArgoFamilyClient, ArgoFamilyError
-from .const import DEFAULT_NAME, DOMAIN
+from .const import DOMAIN
 
 
 class ArgoFamilyDashboardConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
+    def __init__(self) -> None:
+        self._credentials: dict | None = None
+        self._students: list[dict] = []
+
     async def async_step_user(self, user_input: dict | None = None) -> FlowResult:
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            unique = f"{user_input['school_code']}_{user_input[CONF_USERNAME]}_{user_input['child_name']}"
-            await self.async_set_unique_id(unique.lower())
-            self._abort_if_unique_id_configured()
-
             try:
-                await ArgoFamilyClient(self.hass, user_input).async_get_dashboard()
+                self._students = await ArgoFamilyClient(
+                    self.hass,
+                    user_input,
+                ).async_get_students()
             except ArgoFamilyError:
                 errors["base"] = "cannot_connect"
             except Exception:
                 errors["base"] = "unknown"
             else:
-                return self.async_create_entry(
-                    title=f"Argo {user_input['child_name']}",
-                    data=user_input,
-                )
+                self._credentials = user_input
+                if len(self._students) > 1:
+                    return await self.async_step_student()
+                student = self._students[0]
+                return await self._async_create_student_entry(user_input, student)
 
         schema = vol.Schema(
             {
-                vol.Required("child_name"): str,
                 vol.Required("school_code"): str,
                 vol.Required(CONF_USERNAME): str,
                 vol.Required(CONF_PASSWORD): str,
@@ -47,6 +50,84 @@ class ArgoFamilyDashboardConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=schema,
             errors=errors,
             description_placeholders={},
+        )
+
+    async def async_step_student(self, user_input: dict | None = None) -> FlowResult:
+        errors: dict[str, str] = {}
+        credentials = self._credentials or {}
+        students = self._students
+
+        if user_input is not None:
+            student = next(
+                (
+                    item
+                    for item in students
+                    if item["id"] == user_input["student_id"]
+                ),
+                None,
+            )
+            if student is None:
+                errors["base"] = "unknown"
+            else:
+                data = {
+                    **credentials,
+                    "child_name": user_input.get("child_name") or student["name"],
+                }
+                return await self._async_create_student_entry(data, student)
+
+        options = {
+            item["id"]: f"{item['name']} ({item['index'] + 1})"
+            for item in students
+        }
+        default_student = students[0] if students else {"id": "", "name": ""}
+        schema = vol.Schema(
+            {
+                vol.Required(
+                    "student_id",
+                    default=default_student["id"],
+                ): vol.In(options),
+                vol.Optional(
+                    "child_name",
+                    default=default_student["name"],
+                ): str,
+            }
+        )
+        return self.async_show_form(
+            step_id="student",
+            data_schema=schema,
+            errors=errors,
+            description_placeholders={},
+        )
+
+    async def _async_create_student_entry(
+        self,
+        data: dict,
+        student: dict,
+    ) -> FlowResult:
+        entry_data = {
+            **data,
+            "child_name": data.get("child_name") or student["name"],
+            "student_id": student["id"],
+            "student_index": student["index"],
+        }
+        unique = (
+            f"{entry_data['school_code']}_"
+            f"{entry_data[CONF_USERNAME]}_"
+            f"{entry_data['student_id']}"
+        )
+        await self.async_set_unique_id(unique.lower())
+        self._abort_if_unique_id_configured()
+
+        try:
+            await ArgoFamilyClient(self.hass, entry_data).async_get_dashboard()
+        except ArgoFamilyError:
+            return self.async_abort(reason="cannot_connect")
+        except Exception:
+            return self.async_abort(reason="unknown")
+
+        return self.async_create_entry(
+            title=f"Argo {entry_data['child_name']}",
+            data=entry_data,
         )
 
     @staticmethod
