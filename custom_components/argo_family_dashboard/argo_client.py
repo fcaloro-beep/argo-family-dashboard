@@ -304,13 +304,15 @@ class ArgoFamilyClient:
             for entry in register
             for homework in entry.get("compiti", [])
         ]
-        assignments.sort(key=lambda item: item.get("data_consegna") or "")
         pending_assignments = [
             item for item in assignments if _date_sort_key(item.get("data_consegna")) >= _today_key()
         ]
         assigned_assignments = [
             item for item in assignments if _date_sort_key(item.get("data_consegna")) < _today_key()
         ]
+        assignments.sort(key=_assignment_recent_sort_key, reverse=True)
+        pending_assignments.sort(key=_assignment_due_sort_key)
+        assigned_assignments.sort(key=_assignment_recent_sort_key, reverse=True)
 
         subjects = self._build_subjects(raw, grades)
         numeric_subject_averages = [
@@ -669,6 +671,22 @@ def _build_upcoming(
             items.append({"tipo": "Promemoria", **item})
     items.sort(key=lambda item: item.get("data_consegna") or item.get("data") or "")
     return items[:MAX_ATTRIBUTE_ITEMS]
+
+
+def _assignment_due_sort_key(item: dict[str, Any]) -> tuple[str, str, str]:
+    return (
+        _date_sort_key(item.get("data_consegna")),
+        _date_sort_key(item.get("data_assegnazione")),
+        str(item.get("materia") or ""),
+    )
+
+
+def _assignment_recent_sort_key(item: dict[str, Any]) -> tuple[str, str, str]:
+    return (
+        _date_sort_key(item.get("data_assegnazione")),
+        _date_sort_key(item.get("data_consegna")),
+        str(item.get("materia") or ""),
+    )
 
 
 def _group_by(items: list[dict[str, Any]], key: str) -> dict[str, list[dict[str, Any]]]:

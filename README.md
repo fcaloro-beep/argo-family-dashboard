@@ -12,7 +12,7 @@ ogni figlio.
 
 ## Stato del progetto
 
-Versione beta nativa: `4.15`.
+Versione beta nativa: `4.16`.
 
 La repository e installabile da HACS come custom integration Home Assistant.
 Non richiede Docker e non richiede MQTT.
@@ -37,6 +37,10 @@ negli attributi dei sensori.
 La versione `4.15` aggiunge il supporto agli account Argo con piu alunni:
 dopo l'inserimento delle credenziali, se Argo restituisce piu profili, Home
 Assistant mostra una scelta e salva l'alunno selezionato nella configurazione.
+
+La versione `4.16` corregge l'ordinamento dei compiti negli attributi dei
+sensori: i compiti assegnati mostrano prima quelli con data di assegnazione piu
+recente, mentre i compiti da fare restano ordinati per data di consegna.
 
 ## Screenshot
 
